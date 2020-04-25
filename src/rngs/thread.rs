@@ -121,4 +121,29 @@ mod test {
         r.gen::<i32>();
         assert_eq!(r.gen_range(0, 1), 0);
     }
+
+    // CARGO_BUILD_RUSTFLAGS="-C link-arg=-mmacosx-version-min=10.14" MACOSX_DEPLOYMENT_TARGET=10.6 cargo test test_lifetime
+    #[test]
+    #[cfg(feature = "std")]
+    fn test_lifetime(){
+        use std::thread::spawn;
+        use crate::Rng;
+
+        struct Zombie(crate::rngs::ThreadRng);
+        thread_local!(
+            static ZOMBIE: Zombie = Zombie(crate::thread_rng());
+        );
+        impl Drop for Zombie {
+            fn drop(&mut self) {
+                self.0.gen_bool(0.5);
+            }
+        }
+        for i in 0..100{
+            spawn(move || {
+                crate::thread_rng();
+                ZOMBIE.with(|_| {});
+            }).join().unwrap();
+        }
+    }
 }
+
