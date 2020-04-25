@@ -122,6 +122,8 @@ mod test {
         assert_eq!(r.gen_range(0, 1), 0);
     }
 
+    // Causes use-after-free on OSX. The following flags are needed to disable the "fast"
+    // implementation on OSX and turn use-after-destroy into use-after-free.
     // CARGO_BUILD_RUSTFLAGS="-C link-arg=-mmacosx-version-min=10.14" MACOSX_DEPLOYMENT_TARGET=10.6 cargo test test_lifetime
     #[test]
     #[cfg(feature = "std")]
