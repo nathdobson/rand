@@ -135,7 +135,7 @@ mod test {
     // CARGO_BUILD_RUSTFLAGS="-C link-arg=-mmacosx-version-min=10.14" MACOSX_DEPLOYMENT_TARGET=10.6 cargo test test_lifetime
     #[test]
     #[cfg(feature = "std")]
-    fn test_lifetime(){
+    fn test_lifetime() {
         use std::thread::spawn;
         use crate::Rng;
 
@@ -148,7 +148,7 @@ mod test {
                 self.0.gen_bool(0.5);
             }
         }
-        for i in 0..100{
+        for _ in 0..100 {
             spawn(move || {
                 crate::thread_rng();
                 ZOMBIE.with(|_| {});
